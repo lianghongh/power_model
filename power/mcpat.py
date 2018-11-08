@@ -24,7 +24,6 @@ def split_stats(path: str):
                 print('Generating mcpat_'+str(count)+'.xml')
                 count += 1
 
-
 def init(data_path,program):
     path="/home/lianghong/data/"+program+"/data"
     power = np.array([power_m.get_power_list(path + '/power', 0.1)[0]], dtype=np.float32) / 10 * 2
@@ -53,8 +52,6 @@ def init(data_path,program):
         length=len(power)
         for i in range(length):
             f.write("%10.2d %10.2d %10.2d %10.2d %10.2d %10.2d %10.2f\n" %(masked_event[i][0],masked_event[i][1],masked_event[i][2],masked_event[i][3],masked_event[i][4],masked_event[i][5],power[i]))
-
-
 
 
 def fill_template(path,config_path,template_path):

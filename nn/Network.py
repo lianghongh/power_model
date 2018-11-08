@@ -5,6 +5,8 @@ from sklearn.preprocessing import MinMaxScaler
 import sys,os
 
 
+best_acc,node1,node2=0,-1,-1
+
 def sigmoid(x):
     return 1/(1+np.e**-x)
 
@@ -57,6 +59,10 @@ def onelayer_model(events,power,layer_node,act_func,path,program_name):
             l1 = activate_func(tf.matmul(events_trans, weight1) + bias1)
             prediction = sess.run(tf.matmul(l1, weight2) + bias2)
             avg_loss = np.mean(np.abs(prediction - power_trans) / power_trans)
+            global best_acc,node1
+            if 1-avg_loss>best_acc:
+                best_acc=1-avg_loss
+                node1=LAYER_NODE
             print("Avg loss is %f" % (avg_loss))
             print("******End Trainning******\n")
             file_name=path+"/onelayer/prediction_acc"
@@ -128,6 +134,11 @@ def twolayer_model(events,power,layer1_node,layer2_node,act_func,path,program_na
             l2=activate_func(tf.matmul(l1,weight2)+bias2)
             prediction = sess.run(tf.matmul(l2, weight3) + bias3)
             avg_loss = np.mean(np.abs(prediction - power_trans) / power_trans)
+            global best_acc,node1,node2
+            if 1 - avg_loss > best_acc:
+                best_acc = 1 - avg_loss
+                node1=LAYER1_NODE
+                node2=LAYER2_NODE
             print("Avg loss is %f" % (avg_loss))
             print("******End Trainning******\n")
             file_name=path+"/twolayer/prediction_acc"
