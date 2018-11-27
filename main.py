@@ -32,7 +32,7 @@ def benchmark(data_path, act_func, save_path):
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    mcpat.init(data_path,program)
+    # mcpat.init(data_path,program)
     event,power=read_data(data_path,program)
 
     # 测试线性模型
@@ -66,18 +66,19 @@ def benchmark(data_path, act_func, save_path):
 
 
 if __name__=='__main__':
-    program_list=["blackscholes","bodytrack","canneal","cholesky","facesim","fluidanimate","freqmine","x264","ferret","streamcluster","vips","fft","fmm","ocean_cp"]
+    program_list=["blackscholes","bodytrack","cholesky","facesim","fluidanimate","freqmine","streamcluster","fft","fmm","ocean_cp"]
+    # cov.process(program_list,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
 
+    # 相关性分析
+    # counter=cov.cov_analysis(program_list,8,6,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
+    # for i in counter:
+    #     print(i)
+
+
+    # 训练数据，绘制图像
     for program in program_list:
         path = "/home/lianghong/Desktop/GraduateData/research1/data"
         figure="/home/lianghong/Desktop/GraduateData/research1/data/" + program + "/figure"
         benchmark(path,act_func=tf.nn.relu,save_path=figure)
-
-
-
-    # cov.process(program_list,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
-    # counter=cov.cov_analysis(program_list,8,6,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
-    # for i in counter:
-    #     print(i)
 
 

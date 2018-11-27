@@ -1,12 +1,12 @@
 import os
 from power import power_m
 import numpy as np
-
+import re
 
 def split_stats(path: str):
     with open(path + '/stats.txt', "r", encoding='utf-8') as f:
         count = 0
-        data_path = path + '/mcpat_input'
+        data_path = path + '/stats'
         if not os.path.exists(data_path):
             os.mkdir(data_path)
         line = f.readline()
@@ -40,7 +40,7 @@ def init(data_path,program):
     for i in range(11):
         avg_event[i] = avg_event[i] / 8
 
-    mask=[0,1,1,1,1,1,1,0]
+    mask=[1,1,1,0,1,1,1,0]
     masked_event=[]
     for i in range(len(mask)):
         if mask[i]:
@@ -53,26 +53,64 @@ def init(data_path,program):
         for i in range(length):
             f.write("%10.2d %10.2d %10.2d %10.2d %10.2d %10.2d %10.2f\n" %(masked_event[i][0],masked_event[i][1],masked_event[i][2],masked_event[i][3],masked_event[i][4],masked_event[i][5],power[i]))
 
-
-def fill_template(path,config_path,template_path):
-    file_list=os.listdir(path)
+def write_data_file(stats,config,template,save,time_window):
+    file_list = os.listdir(stats)
+    result=[]
     for file in file_list:
-        os.system(path+"GEM5ToMcPAT.py "+path+"/"+file+" "+config_path+" "+template_path+" -o"+path+"_"+file+"_"+"mcpat.xml")
+        r = [0 for i in range(9)]
+        with open(stats + "/" + file, "r", encoding="utf-8") as f:
+            line = f.readline()
+            while line != "\n":
+                t = line.split()
+                if "sim_insts" in line:
+                    r[0] = int(t[1])
+                elif "system.cpu" in line:
+                    for c in range(4):
+                        prefix = "system.cpu" + str(c) + "."
+                        if prefix + "Branches" in line:
+                            r[1] += int(t[1])
+                        elif prefix + "icache.overall_accesses::total" in line:
+                            r[3] += int(t[1])
+                        elif prefix + "dcache.overall_accesses::total" in line:
+                            r[4] += int(t[1])
+                        elif prefix + "num_mem_refs" in line:
+                            r[5] += int(t[1])
+                        elif prefix + "numCycles" in line:
+                            r[7] += int(t[1])
+                elif "system.l2.overall_accesses::total" in line:
+                    r[2] = int(t[1])
+                elif "system.l2.writebacks::total" in line:
+                    r[6] = int(t[1])
+                line = f.readline()
+
+        home = "/home/lianghong/Desktop/GraduateData/research1/run"
+        order = re.findall("\d+", file)[0]
+        # print(order)
+        os.system(
+            home + "/GEM5ToMcPAT.py" + " " + stats + "/" + file + " " + config + " " + template + " -o " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml")
+        mcpat_command = "/home/lianghong/Downloads/mcpat/mcpat"
+        power = os.popen(
+            mcpat_command + " -infile " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml -print_level 1")
+        lines = power.readlines()
+        for line in lines:
+            if "Peak Power" in line:
+                t = line.split()
+                r[8] = float(t[3])
+                print(line)
+                break
+        power.close()
+        result.append(r)
+
+    with open(save,"w",encoding="utf-8") as ff:
+        size=len(result)
+        for i in range(1,size):
+            ff.write("%10d %10d %10d %10d %10d %10d %10d %10d %10.2f\n" % ((result[i][0]-result[i-1][0])/time_window, (result[i][1]-result[i-1][1])/time_window, (result[i][2]-result[i-1][2])/time_window, (result[i][3]-result[i-1][3])/time_window, (result[i][4]-result[i-1][4])/time_window, (result[i][5]-result[i-1][5])/time_window, (result[i][6]-result[i-1][6])/time_window, (result[i][7]-result[i-1][7])/time_window, (result[i][8]+result[i-1][8])/2))
 
 
-
-def compute_power(path,output_path):
-    if not os.path.exists(output_path):
-        os.mkdir(output_path)
-    file_list=os.listdir(path)
-    with open(output_path+'/power.txt','w',encoding='utf-8') as f:
-        for i in file_list:
-            content=os.popen('/home/lianghong/Desktop/GraduateData/research1/run/mcpat/mcpat -infile '+path+'/'+i+' -print_level 1')
-            f.write(i+'\n')
-            f.write(content.read())
 
 
 
 if __name__=='__main__':
-    # split_stats("/home/lianghong/gem5/m5out")
-    fill_template("/home/lianghong/gem5/m5out/mcpat_input","/home/lianghong/gem5/m5out/config.json","/home/lianghong/gem5/m5out/arm.xml")
+    # split_stats("/home/lianghong/Desktop/GraduateData/research1/run/power_test")
+    prefix="/home/lianghong/Desktop/GraduateData/research1/run"
+    write_data_file(prefix+"/power_test/stats",prefix+"/power_test/config.json",prefix+"/power_test/template/arm.xml",prefix+"/cov",0.1)
