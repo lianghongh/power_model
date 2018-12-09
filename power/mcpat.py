@@ -3,8 +3,8 @@ from power import power_m
 import numpy as np
 import re
 
-def split_stats(path: str):
-    with open(path + '/stats.txt', "r", encoding='utf-8') as f:
+def split_stats(path: str,file:str):
+    with open(path +'/'+file, "r", encoding='utf-8') as f:
         count = 0
         data_path = path + '/stats'
         if not os.path.exists(data_path):
@@ -21,7 +21,7 @@ def split_stats(path: str):
                         line = f.readline()
                     ff.write(line)
                     line = f.readline()
-                print('Generating mcpat_'+str(count)+'.xml')
+                print('Generating stats_'+str(count)+'.txt')
                 count += 1
 
 def init(data_path,program):
@@ -53,7 +53,7 @@ def init(data_path,program):
         for i in range(length):
             f.write("%10.2d %10.2d %10.2d %10.2d %10.2d %10.2d %10.2f\n" %(masked_event[i][0],masked_event[i][1],masked_event[i][2],masked_event[i][3],masked_event[i][4],masked_event[i][5],power[i]))
 
-def write_data_file(stats,config,template,save,time_window):
+def write_data_file(stats,config,template,save):
     file_list = os.listdir(stats)
     result=[]
     for file in file_list:
@@ -84,33 +84,32 @@ def write_data_file(stats,config,template,save,time_window):
                 line = f.readline()
 
         home = "/home/lianghong/Desktop/GraduateData/research1/run"
-        order = re.findall("\d+", file)[0]
+        order = re.findall("\\d+", file)[0]
         # print(order)
         os.system(
             home + "/GEM5ToMcPAT.py" + " " + stats + "/" + file + " " + config + " " + template + " -o " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml")
         mcpat_command = "/home/lianghong/Downloads/mcpat/mcpat"
-        power = os.popen(
-            mcpat_command + " -infile " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml -print_level 1")
-        lines = power.readlines()
-        for line in lines:
-            if "Peak Power" in line:
-                t = line.split()
-                r[8] = float(t[3])
-                print(line)
-                break
-        power.close()
+        # power = os.popen(mcpat_command + " -infile " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml -print_level 1")
+        # lines = power.readlines()
+        # for line in lines:
+        #     if "Peak Power" in line:
+        #         t = line.split()
+        #         r[8] = float(t[3])
+        #         break
+        # power.close()
+        r[8]=0
         result.append(r)
 
     with open(save,"w",encoding="utf-8") as ff:
         size=len(result)
-        for i in range(1,size):
-            ff.write("%10d %10d %10d %10d %10d %10d %10d %10d %10.2f\n" % ((result[i][0]-result[i-1][0])/time_window, (result[i][1]-result[i-1][1])/time_window, (result[i][2]-result[i-1][2])/time_window, (result[i][3]-result[i-1][3])/time_window, (result[i][4]-result[i-1][4])/time_window, (result[i][5]-result[i-1][5])/time_window, (result[i][6]-result[i-1][6])/time_window, (result[i][7]-result[i-1][7])/time_window, (result[i][8]+result[i-1][8])/2))
+        for i in range(size):
+            ff.write("%10d %10d %10d %10d %10d %10d %10d %10d %10.2f\n" % (result[i][0],result[i][1],result[i][2],result[i][3],result[i][4],result[i][5],result[i][6],result[i][7],result[i][8]))
 
 
 
 
 
 if __name__=='__main__':
-    # split_stats("/home/lianghong/Desktop/GraduateData/research1/run/power_test")
-    prefix="/home/lianghong/Desktop/GraduateData/research1/run"
-    write_data_file(prefix+"/power_test/stats",prefix+"/power_test/config.json",prefix+"/power_test/template/arm.xml",prefix+"/cov",0.1)
+    split_stats("/Users/lianghong/Desktop/GraduateData/research1/run/power_test","mystats.txt")
+    prefix="/Users/lianghong/Desktop/GraduateData/research1/run"
+    write_data_file(prefix+"/power_test/stats",prefix+"/power_test/config.json",prefix+"/power_test/template/arm.xml",prefix+"/cov")

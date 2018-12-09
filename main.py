@@ -70,9 +70,9 @@ if __name__=='__main__':
     # cov.process(program_list,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
 
     # 相关性分析
-    # counter=cov.cov_analysis(program_list,8,6,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
-    # for i in counter:
-    #     print(i)
+    counter=cov.cov_analysis(program_list,8,6,save_path="/home/lianghong/Desktop/GraduateData/research1/data")
+    for i in counter:
+        print(i)
 
 
     # 训练数据，绘制图像
