@@ -82,6 +82,15 @@ def cal_correlation(data_path):
     return r
 
 def cov_analysis(app_list,event_length,k,save_path):
+    """
+    相关性分析
+
+    :param app_list: app列表
+    :param event_length: 事件总数
+    :param k: 选k个事件
+    :param save_path: 存储路径
+    :return:
+    """
     if k>event_length:
         print("k is too large!")
         return []

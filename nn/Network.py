@@ -19,6 +19,17 @@ def tanh(x):
     return (a-b)/(a+b)
 
 def onelayer_model(events,power,layer_node,act_func,path,program_name):
+    """
+    单隐含层模型训练
+
+    :param events: 事件数据
+    :param power: 功耗数据
+    :param layer_node: 隐含层节点数
+    :param act_func: 激活函数
+    :param path: 存储路径
+    :param program_name: 程序名
+    :return:
+    """
     tf.reset_default_graph()
     graph=tf.Graph()
     with graph.as_default() as g:
@@ -91,6 +102,18 @@ def onelayer_model(events,power,layer_node,act_func,path,program_name):
             return model
 
 def twolayer_model(events,power,layer1_node,layer2_node,act_func,path,program_name):
+    """
+    双隐含层模型
+
+    :param events: 性能事件数据
+    :param power: 功耗数据
+    :param layer1_node: 第一隐含层节点数
+    :param layer2_node: 第二隐含层节点数
+    :param act_func: 激活函数
+    :param path: 存储路径
+    :param program_name: 程序名
+    :return:
+    """
     tf.reset_default_graph()
     graph=tf.Graph()
     with graph.as_default() as g:
@@ -171,6 +194,15 @@ def twolayer_model(events,power,layer1_node,layer2_node,act_func,path,program_na
 
 
 def linear_model_train(events,power,path,program_name):
+    """
+    线性模型
+
+    :param events: 事件数据
+    :param power: 功耗数据
+    :param path: 存储路径
+    :param program_name: 程序名
+    :return:
+    """
     tf.reset_default_graph()
     graph=tf.Graph()
     with graph.as_default() as g:
@@ -217,6 +249,15 @@ def linear_model_train(events,power,path,program_name):
             return model
 
 def graph(prediction,real,program_name,save_path):
+    """
+    绘图
+
+    :param prediction: 预测值
+    :param real: 真实值
+    :param program_name: 程序名
+    :param save_path: 存储路径
+    :return:
+    """
     size=len(real)
     x=np.arange(size)
     plt.figure()

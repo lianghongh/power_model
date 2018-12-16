@@ -8,6 +8,13 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def read_data(path,program):
+    """
+    通过路径读取程序运行后的性能事件和功耗数据
+
+    :param path: 数据路径
+    :param program: 程序名
+    :return: 性能事件和功耗值
+    """
     event,power=[],[]
     with open(path+"/"+program+"/data/events","r",encoding="utf-8") as f:
         line=f.readline()
@@ -26,6 +33,14 @@ def read_data(path,program):
     return np.array(event,dtype=np.float32),np.array([power],dtype=np.float32).T
 
 def benchmark(data_path, act_func, save_path):
+    """
+    测试在线性模型、单隐含层和双隐含层下的功耗模型
+
+    :param data_path: 数据路径
+    :param act_func: 激活函数
+    :param save_path: 存储路径
+    :return:
+    """
     if not os.path.exists(data_path+"/"+program+"/data"):
         os.makedirs(data_path+"/"+program+"/data")
     if not os.path.exists(save_path):

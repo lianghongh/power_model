@@ -4,6 +4,13 @@ import numpy as np
 import re
 
 def split_stats(path: str,file:str):
+    """
+    将文件切割为单个stats.txt
+
+    :param path: 路径
+    :param file: 文件名
+    :return:
+    """
     with open(path +'/'+file, "r", encoding='utf-8') as f:
         count = 0
         data_path = path + '/stats'
@@ -25,6 +32,13 @@ def split_stats(path: str,file:str):
                 count += 1
 
 def init(data_path,program):
+    """
+    读取x86数据，存在data_path下
+
+    :param data_path: 存储路径
+    :param program: 程序名
+    :return:
+    """
     path="/home/lianghong/data/"+program+"/data"
     power = np.array([power_m.get_power_list(path + '/power', 0.1)[0]], dtype=np.float32) / 10 * 2
     events = []
@@ -54,6 +68,15 @@ def init(data_path,program):
             f.write("%10.2d %10.2d %10.2d %10.2d %10.2d %10.2d %10.2f\n" %(masked_event[i][0],masked_event[i][1],masked_event[i][2],masked_event[i][3],masked_event[i][4],masked_event[i][5],power[i]))
 
 def write_data_file(stats,config,template,save):
+    """
+    从stats文件读取性能事件，计算功耗并存储到指定文件
+
+    :param stats: stats目录
+    :param config: config.json文件
+    :param template: mcpat模板文件
+    :param save: 数据存储路径
+    :return:
+    """
     file_list = os.listdir(stats)
     result=[]
     for file in file_list:
