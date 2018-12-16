@@ -37,7 +37,7 @@ def refill_stats(data_path,template_path,save_path):
 
 
 if __name__=="__main__":
-    template_path="/Users/lianghong/Desktop/GraduateData/research1/run/power_test/stats/stats_100.txt"
-    data_path="/Users/lianghong/Desktop/GraduateData/research1/data/blackscholes/data/cov"
-    save_path="/Users/lianghong/Desktop/mystats.txt"
+    template_path="/home/lianghong/Desktop/GraduateData/research1/run/power_test/stats_8.txt"
+    data_path="/home/lianghong/Desktop/GraduateData/research1/data/bodytrack/data/cov"
+    save_path="/home/lianghong/Desktop/GraduateData/research1/run/power_test/stats.txt"
     refill_stats(data_path,template_path,save_path)

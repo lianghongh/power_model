@@ -25,7 +25,6 @@ def read_data(path,program):
             line=f.readline()
     return np.array(event,dtype=np.float32),np.array([power],dtype=np.float32).T
 
-
 def benchmark(data_path, act_func, save_path):
     if not os.path.exists(data_path+"/"+program+"/data"):
         os.makedirs(data_path+"/"+program+"/data")
@@ -46,12 +45,13 @@ def benchmark(data_path, act_func, save_path):
     file_name= save_path + "/onelayer/prediction_acc"
     if os.path.exists(file_name):
         os.remove(file_name)
-    for node in range(4,14):
-        model=Network.onelayer_model(event, power, layer_node=node, act_func=act_func, path=save_path, program_name=program)
-        Network.graph(model(event), power, program_name=program, save_path=save_path + "/onelayer/" + program + "_" + str(node))
-    with open(save_path+"/onelayer/best_acc","w",encoding="utf-8") as f:
-        f.write("BEST_ACC=%.4f node1=%d\n" %(Network.best_acc,Network.node1))
+        for node in range(4,14):
+            model=Network.onelayer_model(event, power, layer_node=node, act_func=act_func, path=save_path, program_name=program)
+            Network.graph(model(event), power, program_name=program, save_path=save_path + "/onelayer/" + program + "_" + str(node))
+        with open(save_path+"/onelayer/best_acc","w",encoding="utf-8") as f:
+            f.write("BEST_ACC=%.4f node1=%d\n" %(Network.best_acc,Network.node1))
     Network.best_acc,Network.node1=0,-1
+
     # 测试双隐含层模型
     file_name= save_path + "/twolayer/prediction_acc"
     if os.path.exists(file_name):

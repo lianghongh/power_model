@@ -89,15 +89,14 @@ def write_data_file(stats,config,template,save):
         os.system(
             home + "/GEM5ToMcPAT.py" + " " + stats + "/" + file + " " + config + " " + template + " -o " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml")
         mcpat_command = "/home/lianghong/Downloads/mcpat/mcpat"
-        # power = os.popen(mcpat_command + " -infile " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml -print_level 1")
-        # lines = power.readlines()
-        # for line in lines:
-        #     if "Peak Power" in line:
-        #         t = line.split()
-        #         r[8] = float(t[3])
-        #         break
-        # power.close()
-        r[8]=0
+        power = os.popen(mcpat_command + " -infile " + home + "/power_test/mcpat_input/mcpat_" + order + ".xml -print_level 1")
+        lines = power.readlines()
+        for line in lines:
+            if "Peak Power" in line:
+                t = line.split()
+                r[8] = float(t[3])
+                break
+        power.close()
         result.append(r)
 
     with open(save,"w",encoding="utf-8") as ff:
@@ -110,6 +109,6 @@ def write_data_file(stats,config,template,save):
 
 
 if __name__=='__main__':
-    split_stats("/Users/lianghong/Desktop/GraduateData/research1/run/power_test","mystats.txt")
-    prefix="/Users/lianghong/Desktop/GraduateData/research1/run"
-    write_data_file(prefix+"/power_test/stats",prefix+"/power_test/config.json",prefix+"/power_test/template/arm.xml",prefix+"/cov")
+    # split_stats("/home/lianghong/Desktop/GraduateData/research1/run/power_test","stats.txt")
+    prefix="/home/lianghong/Desktop/GraduateData/research1/run"
+    write_data_file(prefix+"/power_test/stats",prefix+"/power_test/config.json",prefix+"/power_test/template/arm.xml",prefix+"/power_test/cov")
